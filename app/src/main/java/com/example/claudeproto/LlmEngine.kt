@@ -5,7 +5,7 @@ import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import org.json.JSONArray
 import java.io.File
 
-/** Modelo de lenguaje 100% en el dispositivo (MediaPipe LLM Inference, formato .task). */
+// Modelo de lenguaje en el dispositivo (MediaPipe LLM Inference, formato .task).
 class LlmEngine(private val ctx: Context) {
     @Volatile private var llm: LlmInference? = null
     val modelFile: File get() = File(ctx.filesDir, "model.task")
@@ -19,6 +19,7 @@ class LlmEngine(private val ctx: Context) {
         val opts = LlmInference.LlmInferenceOptions.builder()
             .setModelPath(modelFile.absolutePath)
             .setMaxTokens(1024)
+            .setPreferredBackend(LlmInference.Backend.CPU)
             .build()
         llm = LlmInference.createFromOptions(ctx, opts)
         return true
@@ -28,13 +29,13 @@ class LlmEngine(private val ctx: Context) {
     fun chat(msgs: JSONArray): String {
         val m = llm ?: throw IllegalStateException("Modelo no cargado")
         val sb = StringBuilder()
-        for (i in maxOf(0, msgs.length() - 6) until msgs.length()) {   // ventana corta de contexto
+        for (i in maxOf(0, msgs.length() - 6) until msgs.length()) {
             val o = msgs.getJSONObject(i)
             val role = if (o.getString("role") == "user") "user" else "model"
             sb.append("<start_of_turn>").append(role).append('\n')
                 .append(o.getString("content")).append("<end_of_turn>\n")
         }
-        sb.append("<start_of_turn>model\n")                              // formato Gemma
+        sb.append("<start_of_turn>model\n")
         return m.generateResponse(sb.toString()).trim()
     }
 }
