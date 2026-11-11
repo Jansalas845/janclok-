@@ -7,7 +7,7 @@ import fi.iki.elonen.NanoHTTPD.Method
 import fi.iki.elonen.NanoHTTPD.Response
 import org.json.JSONObject
 
-/** Backend propio: API HTTP local (127.0.0.1) dentro de la app. Sirve la UI y /api/*. */
+// Backend propio: API HTTP local en 127.0.0.1 dentro de la app. Sirve la interfaz y la API.
 class LocalServer(private val ctx: Context, private val engine: LlmEngine) :
     NanoHTTPD("127.0.0.1", 8765) {
 
@@ -28,7 +28,9 @@ class LocalServer(private val ctx: Context, private val engine: LlmEngine) :
             session.method == Method.GET -> {
                 val path = if (uri == "/") "index.html" else uri.trimStart('/')
                 val mime = when (path.substringAfterLast('.')) {
-                    "html" -> "text/html; charset=utf-8"; "js" -> "text/javascript"; "css" -> "text/css"
+                    "html" -> "text/html; charset=utf-8"
+                    "js" -> "text/javascript"
+                    "css" -> "text/css"
                     else -> "application/octet-stream"
                 }
                 newChunkedResponse(Response.Status.OK, mime, ctx.assets.open("web/$path"))
