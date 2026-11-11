@@ -9,8 +9,8 @@ android {
         applicationId = "com.example.claudeproto"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
-        versionName = "0.2-offline"
+        versionCode = 3
+        versionName = "0.3-offline"
         ndk { abiFilters += listOf("arm64-v8a") }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
@@ -19,5 +19,5 @@ android {
 }
 dependencies {
     implementation("org.nanohttpd:nanohttpd:2.3.1")
-    implementation("com.google.mediapipe:tasks-genai:0.10.14")
+    implementation("com.google.mediapipe:tasks-genai:0.10.24")
 }
